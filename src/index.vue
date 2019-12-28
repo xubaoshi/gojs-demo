@@ -77,7 +77,7 @@ export default {
 <style lang="scss" scoped>
 .chart {
   margin: 50px 50px 0 50px;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 100px);
   background-color: #ccc;
 }
 </style>
