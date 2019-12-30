@@ -11,7 +11,8 @@
   </div>
 </template>
 <script>
-import go from 'gojs/release/go-debug'
+// import go from 'gojs/release/go-debug'
+import go from './lib/js/go'
 import ZoomSlider from './lib/js/zoom'
 import './lib/css/zoom.css'
 import unknownImg from './asserts/images/relation/unknown.png'
