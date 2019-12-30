@@ -5,3 +5,4 @@ TODOs.md
 /dist
 RELEASE_NOTE*.md
 .vscode
+.cache

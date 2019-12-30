@@ -1,13 +1,19 @@
 <template>
   <div class="wrap">
-    <div id="overview"
-         class="overview"></div>
-    <div id="chart"
-         class="chart"></div>
+    <div
+      id="overview"
+      class="overview"
+    ></div>
+    <div
+      id="chart"
+      class="chart"
+    ></div>
   </div>
 </template>
 <script>
 import go from 'gojs/release/go-debug'
+import ZoomSlider from './lib/js/zoom'
+import './lib/css/zoom.css'
 import unknownImg from './asserts/images/relation/unknown.png'
 import cacheImg from './asserts/images/relation/cache.png'
 import databaseImg from './asserts/images/relation/database.png'
@@ -88,7 +94,12 @@ export default {
       this.diagram = $(go.Diagram, 'chart', {
         initialContentAlignment: go.Spot.Center,
         initialAutoScale: go.Diagram.UniformToFill,
-        layout: $(go.ForceDirectedLayout, { maxIterations: 200, defaultSpringLength: 30, defaultElectricalCharge: 100 }
+        // 去除选中蓝色边框
+        nodeSelectionAdornmentTemplate:
+          $(go.Adornment, "Auto",
+            $(go.Shape, "Rectangle", { fill: "white", stroke: null }),
+          ),
+        layout: $(go.ForceDirectedLayout, { maxIterations: 200, defaultSpringLength: 30, defaultElectricalCharge: 200 }
         )
       })
       this.$nextTick(() => {
@@ -116,7 +127,6 @@ export default {
               hiddenNodes.push(node.key);
             }
           });
-          console.log(`total:${nodes.length},show:${showNodes.length},hidden:${hiddenNodes.length}`)
           this.diagram.model.startTransaction("flash");
           hiddenNodes.forEach(key => {
             const node = this.diagram.findNodeForKey(key)
@@ -174,8 +184,16 @@ export default {
         model.linkDataArray = sourceData.edges ? sourceData.edges : []
         this.diagram.model = model
 
+        // mini map
         $(go.Overview, "overview",
-          { observed: this.diagram, contentAlignment: go.Spot.Center });
+          { observed: this.diagram, contentAlignment: go.Spot.Center })
+
+        // zoom tool
+        new ZoomSlider(this.diagram,
+          {
+            // alignment: go.Spot.TopRight, alignmentFocus: go.Spot.TopRight,
+            size: 150, buttonSize: 20, orientation: 'vertical'
+          });
       })
     },
     getData () {
@@ -208,25 +226,37 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
 .chart {
+  overflow-y: hidden;
+  overflow-x: hidden;
   height: 100%;
   background-color: #fff;
   border: solid 1px #ccc;
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  div {
+    overflow-y: hidden !important;
+    overflow-x: hidden !important;
+  }
 }
 .wrap {
   position: relative;
   height: calc(100vh - 20px);
+  overflow: hidden;
   box-sizing: border-box;
   padding: 0;
   margin: 0;
   .overview {
     position: absolute;
-    width: 250px;
-    height: 250px;
+    width: 200px;
+    height: 200px;
     bottom: 25px;
     right: 25px;
     border: 1px solid #ccc;
